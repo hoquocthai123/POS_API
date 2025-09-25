@@ -1,0 +1,1294 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "POSBE API",
+        "version": "1.0.0",
+        "description": "API quản lý sản phẩm, người dùng, khách hàng, đơn hàng, doanh thu và báo cáo lỗi"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:3000",
+            "description": "Local server"
+        }
+    ],
+    "paths": {
+        "/products": {
+            "get": {
+                "summary": "Lấy tất cả sản phẩm",
+                "responses": {
+                    "200": {
+                        "description": "Danh sách sản phẩm",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Product"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "Thêm sản phẩm mới",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ProductInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Sản phẩm được tạo thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Product"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/products/{id}": {
+            "get": {
+                "summary": "Lấy sản phẩm theo ID",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Thông tin sản phẩm",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Product"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Không tìm thấy sản phẩm"
+                    }
+                }
+            },
+            "put": {
+                "summary": "Cập nhật sản phẩm",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ProductInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Cập nhật thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Product"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Xóa sản phẩm",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Xóa thành công"
+                    }
+                }
+            }
+        },
+        "/customers/{id}/orders": {
+      "get": {
+        "summary": "Lấy tất cả đơn hàng của 1 khách hàng (theo id_cus)",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "id_cus của khách hàng"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Danh sách đơn hàng của khách",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Order" }
+                }
+              }
+            }
+          },
+          "500": { "description": "Lỗi server" }
+        }
+      }
+    },
+    "/customers/{id}/orders/{orderId}": {
+      "get": {
+        "summary": "Lấy chi tiết 1 đơn hàng của khách (kiểm tra thuộc về id_cus)",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "id_cus"
+          },
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" },
+            "description": "id_order"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Chi tiết đơn hàng",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/OrderDetail" }
+              }
+            }
+          },
+          "404": { "description": "Không tìm thấy đơn hàng" },
+          "500": { "description": "Lỗi server" }
+        }
+      }
+    },
+        "/users": {
+            "get": {
+                "summary": "Lấy tất cả người dùng",
+                "responses": {
+                    "200": {
+                        "description": "Danh sách người dùng",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/User"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "Thêm người dùng mới",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Người dùng được tạo",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}": {
+            "get": {
+                "summary": "Lấy thông tin người dùng theo ID",
+                "description": "Trả về thông tin chi tiết người dùng dựa trên ID",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID của người dùng",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Thông tin người dùng thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Người dùng không tồn tại"
+                    }
+                }
+            }
+        },
+        "/customers": {
+            "get": {
+                "summary": "Lấy danh sách khách hàng",
+                "responses": {
+                    "200": {
+                        "description": "Danh sách khách hàng",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Customer"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "Thêm khách hàng mới",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CustomerInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Khách hàng được tạo",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Customer"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/customers/{id}": {
+            "get": {
+                "summary": "Lấy thông tin khách hàng theo ID",
+                "description": "Trả về thông tin chi tiết khách hàng dựa trên ID",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID của khách hàng",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Thông tin khách hàng thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Customer"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Khách hàng không tồn tại"
+                    }
+                }
+            }
+        },
+        "/goods": {
+            "get": {
+                "summary": "Lấy tất cả goods kèm good_item",
+                "responses": {
+                    "200": {
+                        "description": "Danh sách goods",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer"
+                                            },
+                                            "code": {
+                                                "type": "string"
+                                            },
+                                            "type": {
+                                                "type": "string",
+                                                "enum": [
+                                                    "import",
+                                                    "export"
+                                                ]
+                                            },
+                                            "note": {
+                                                "type": "string"
+                                            },
+                                            "created_at": {
+                                                "type": "string"
+                                            },
+                                            "updated_at": {
+                                                "type": "string"
+                                            },
+                                            "items": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer"
+                                                        },
+                                                        "goods_id": {
+                                                            "type": "integer"
+                                                        },
+                                                        "product_id": {
+                                                            "type": "integer"
+                                                        },
+                                                        "product_name": {
+                                                            "type": "string"
+                                                        },
+                                                        "barcode": {
+                                                            "type": "string"
+                                                        },
+                                                        "quantity": {
+                                                            "type": "integer"
+                                                        },
+                                                        "price": {
+                                                            "type": "integer"
+                                                        },
+                                                        "total": {
+                                                            "type": "integer"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "Tạo mới goods và good_item",
+                "description": "Thêm phiếu nhập/xuất cùng danh sách sản phẩm chi tiết",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "code": {
+                                        "type": "string",
+                                        "example": "PN001"
+                                    },
+                                    "type": {
+                                        "type": "string",
+                                        "enum": [
+                                            "import",
+                                            "export"
+                                        ],
+                                        "example": "import"
+                                    },
+                                    "note": {
+                                        "type": "string",
+                                        "example": "Nhập hàng đầu năm"
+                                    },
+                                    "items": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "product_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "quantity": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "price": {
+                                                    "type": "integer",
+                                                    "example": 15000
+                                                }
+                                            },
+                                            "required": [
+                                                "product_id",
+                                                "quantity",
+                                                "price"
+                                            ]
+                                        }
+                                    }
+                                },
+                                "required": [
+                                    "code",
+                                    "type",
+                                    "items"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Goods tạo thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "goods_id": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Thiếu dữ liệu bắt buộc"
+                    },
+                    "500": {
+                        "description": "Lỗi server"
+                    }
+                }
+            }
+        },
+        "/orders": {
+            "post": {
+                "summary": "Tạo đơn hàng mới",
+                "description": "Tạo đơn hàng và lưu chi tiết sản phẩm vào order_items",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "id_user": {
+                                        "type": "integer",
+                                        "example": 3
+                                    },
+                                    "id_cus": {
+                                        "type": "integer",
+                                        "example": 939406181
+                                    },
+                                    "created_at": {
+                                        "type": "string",
+                                        "format": "date-time"
+                                    },
+                                    "tongtien": {
+                                        "type": "number",
+                                        "example": 250000
+                                    },
+                                    "items": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id_product": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Coca Cola 330ml"
+                                                },
+                                                "barcode": {
+                                                    "type": "string",
+                                                    "example": "8934567890123"
+                                                },
+                                                "price": {
+                                                    "type": "number",
+                                                    "example": 10000
+                                                },
+                                                "category": {
+                                                    "type": "string",
+                                                    "example": "Nước ngọt"
+                                                },
+                                                "image": {
+                                                    "type": "string",
+                                                    "example": "https://example.com/img"
+                                                },
+                                                "quantity": {
+                                                    "type": "integer",
+                                                    "example": 2
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "required": [
+                                    "id_user",
+                                    "tongtien",
+                                    "items"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Đơn hàng được tạo thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "id_order": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Thiếu dữ liệu bắt buộc"
+                    },
+                    "500": {
+                        "description": "Lỗi server"
+                    }
+                }
+            }
+        },
+        "/sales": {
+            "get": {
+                "summary": "Lấy danh sách doanh thu",
+                "responses": {
+                    "200": {
+                        "description": "Danh sách doanh thu",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Sale"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "Tạo bản ghi doanh thu",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SaleInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Doanh thu được ghi nhận",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Sale"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/promotions": {
+            "get": {
+                "summary": "Lấy danh sách khuyến mãi",
+                "responses": {
+                    "200": {
+                        "description": "Danh sách khuyến mãi",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Promotion"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "Tạo khuyến mãi mới",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PromotionInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Khuyến mãi được tạo thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Promotion"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/promotions/{promotion_id}": {
+            "get": {
+                "summary": "Lấy thông tin chi tiết một khuyến mãi",
+                "parameters": [
+                    {
+                        "name": "promotion_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Chi tiết khuyến mãi",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Promotion"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Không tìm thấy khuyến mãi"
+                    }
+                }
+            },
+            "put": {
+                "summary": "Cập nhật khuyến mãi",
+                "parameters": [
+                    {
+                        "name": "promotion_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PromotionInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Khuyến mãi đã được cập nhật",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Promotion"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Không tìm thấy khuyến mãi"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Xóa khuyến mãi",
+                "parameters": [
+                    {
+                        "name": "promotion_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Xóa thành công"
+                    },
+                    "404": {
+                        "description": "Không tìm thấy khuyến mãi"
+                    }
+                }
+            }
+        },
+        "/send-invoice/{orderCode}": {
+  "post": {
+    "summary": "Gửi hóa đơn theo order_code (kèm chi tiết items)",
+    "parameters": [
+      {
+        "name": "orderCode",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "string" },
+        "example": "DH17582967177862"
+      }
+    ],
+    "requestBody": {
+      "required": false,
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "email": { "type": "string", "description": "Email override (nếu DB không lưu email khách)" }
+            }
+          },
+          "example": { "email": "khachhang@example.com" }
+        }
+      }
+    },
+    "responses": {
+      "200": {
+        "description": "Gửi mail thành công",
+        "content": {
+          "application/json": {
+            "example": {
+              "message": "Đã gửi hóa đơn thành công",
+              "order": { "id_order": 1, "order_code": "DH17582967177862", "status": "pending", "tongtien": 500000 },
+              "items": [
+                { "id_item": 1, "name": "Sản phẩm A", "price": 200000, "quantity": 2, "image": "https://..." }
+              ]
+            }
+          }
+        }
+      },
+      "400": { "description": "Thiếu email khách hàng và không có trong DB" },
+      "404": { "description": "Không tìm thấy đơn hàng" },
+      "500": { "description": "Lỗi server" }
+    }
+  }
+},
+        "/reports": {
+            "get": {
+                "summary": "Lấy danh sách báo cáo lỗi",
+                "responses": {
+                    "200": {
+                        "description": "Danh sách báo cáo",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Report"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "Tạo báo cáo lỗi",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ReportInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Báo cáo được tạo",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Report"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Promotion": {
+      "type": "object",
+      "properties": {
+        "promotion_id": { "type": "integer" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "image_url": { "type": "string" },
+        "discount_value": { "type": "number" },
+        "start_date": { "type": "string", "format": "date" },
+        "end_date": { "type": "string", "format": "date" }
+      }
+    },
+    "PromotionInput": {
+      "type": "object",
+      "required": ["title", "discount_value", "start_date", "end_date"],
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "image_url": { "type": "string" },
+        "discount_value": { "type": "number" },
+        "start_date": { "type": "string", "format": "date" },
+        "end_date": { "type": "string", "format": "date" }
+      }
+    },
+            "Product": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Pepsi 330ml"
+                    },
+                    "barcode": {
+                        "type": "string",
+                        "example": "8934567890456"
+                    },
+                    "price": {
+                        "type": "integer",
+                        "example": 9500
+                    },
+                    "category": {
+                        "type": "string",
+                        "example": "Nước ngọt"
+                    },
+                    "image": {
+                        "type": "string",
+                        "example": "https://picsum.photos/seed/pepsi/200/200"
+                    }
+                }
+            },
+            "ProductInput": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "barcode": {
+                        "type": "string"
+                    },
+                    "price": {
+                        "type": "integer"
+                    },
+                    "category": {
+                        "type": "string"
+                    },
+                    "image": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "name",
+                    "barcode",
+                    "price"
+                ]
+            },
+            "User": {
+                "type": "object",
+                "properties": {
+                    "id_user": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "username": {
+                        "type": "string",
+                        "example": "admin"
+                    },
+                    "password": {
+                        "type": "string",
+                        "example": "123456"
+                    },
+                    "sdt": {
+                        "type": "string",
+                        "example": "0901234567"
+                    },
+                    "role": {
+                        "type": "string",
+                        "example": "admin"
+                    }
+                }
+            },
+            "UserInput": {
+                "type": "object",
+                "properties": {
+                    "username": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    },
+                    "sdt": {
+                        "type": "string"
+                    },
+                    "role": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "username",
+                    "password"
+                ]
+            },
+            "Order": {
+                "type": "object",
+                "properties": {
+                    "id_order": {
+                        "type": "integer",
+                        "example": 101
+                    },
+                    "id_user": {
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "id_cus": {
+                        "type": "integer",
+                        "example": 15
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-08-15T14:35:00Z"
+                    },
+                    "tongtien": {
+                        "type": "number",
+                        "example": 250000
+                    }
+                }
+            },
+            "OrderInput": {
+                "type": "object",
+                "properties": {
+                    "id_user": {
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "id_cus": {
+                        "type": "integer",
+                        "example": 15
+                    },
+                    "tongtien": {
+                        "type": "number",
+                        "example": 250000
+                    }
+                },
+                "required": [
+                    "id_user",
+                    "tongtien"
+                ]
+            },
+            "/reports": {
+                "get": {
+                    "summary": "Lấy danh sách báo cáo",
+                    "description": "Trả về danh sách các báo cáo lỗi. Có thể lọc theo `type`.",
+                    "parameters": [
+                        {
+                            "in": "query",
+                            "name": "type",
+                            "schema": {
+                                "type": "string",
+                                "enum": [
+                                    "order",
+                                    "good",
+                                    "customer",
+                                    "user",
+                                    "shift"
+                                ]
+                            },
+                            "description": "Loại báo cáo muốn lọc."
+                        }
+                    ],
+                    "responses": {
+                        "200": {
+                            "description": "Danh sách báo cáo",
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id_repo": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "error_title": {
+                                                    "type": "string",
+                                                    "example": "Lỗi đặt hàng"
+                                                },
+                                                "error_detail": {
+                                                    "type": "string",
+                                                    "example": "Không đủ tồn kho"
+                                                },
+                                                "type": {
+                                                    "type": "string",
+                                                    "example": "order"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2025-08-18T10:20:30Z"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "500": {
+                            "description": "Lỗi khi truy vấn cơ sở dữ liệu",
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "type": "object",
+                                        "properties": {
+                                            "error": {
+                                                "type": "string",
+                                                "example": "Database query failed"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "Sale": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "tong_tien": {
+                        "type": "number",
+                        "example": 150000
+                    },
+                    "ngay_gio": {
+                        "type": "string",
+                        "example": "2025-08-14 14:30:00"
+                    },
+                    "username": {
+                        "type": "string",
+                        "example": "admin"
+                    },
+                    "customer": {
+                        "type": "string",
+                        "nullable": true,
+                        "example": "0901234567"
+                    }
+                }
+            },
+            "SaleInput": {
+                "type": "object",
+                "properties": {
+                    "tong_tien": {
+                        "type": "number"
+                    },
+                    "username": {
+                        "type": "string"
+                    },
+                    "customer": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "tong_tien",
+                    "username"
+                ]
+            },
+            "Customer": {
+                "type": "object",
+                "properties": {
+                    "id_cus": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "sdt": {
+                        "type": "string",
+                        "example": "0909876543"
+                    },
+                    "diem": {
+                        "type": "integer",
+                        "example": 200
+                    },
+                    "dia_chi": {
+                        "type": "string",
+                        "example": "123 Lê Lợi, TP.HCM"
+                    },
+                    "gioi_tinh": {
+                        "type": "string",
+                        "example": "Nam"
+                    }
+                }
+            },
+            "CustomerInput": {
+                "type": "object",
+                "properties": {
+                    "sdt": {
+                        "type": "string"
+                    },
+                    "diem": {
+                        "type": "integer"
+                    },
+                    "dia_chi": {
+                        "type": "string"
+                    },
+                    "gioi_tinh": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "sdt"
+                ]
+            },
+            "OrderDetail": {
+        "type": "object",
+        "allOf": [
+          { "$ref": "#/components/schemas/Order" },
+          {
+            "type": "object",
+            "properties": {
+              "items": {
+                "type": "array",
+                "items": { "$ref": "#/components/schemas/OrderItem" }
+              }
+            }
+          }
+        ]
+      },
+      "OrderItem": {
+        "type": "object",
+        "properties": {
+          "id_item": { "type": "integer", "example": 1 },
+          "id_order": { "type": "integer", "example": 123 },
+          "name": { "type": "string", "example": "Pepsi 330ml" },
+          "quantity": { "type": "integer", "example": 2 },
+          "price": { "type": "number", "example": 9500 }
+        },
+        "required": ["name", "quantity", "price"]
+      },
+            "Report": {
+                "type": "object",
+                "properties": {
+                    "id_repo": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "ten_loi": {
+                        "type": "string",
+                        "example": "Lỗi kết nối DB"
+                    },
+                    "noi_dung": {
+                        "type": "string",
+                        "example": "Không thể kết nối MySQL vào lúc 14:00"
+                    }
+                }
+            },
+            "ReportInput": {
+                "type": "object",
+                "properties": {
+                    "ten_loi": {
+                        "type": "string"
+                    },
+                    "noi_dung": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "ten_loi",
+                    "noi_dung"
+                ]
+            }
+        }
+    }
+}
